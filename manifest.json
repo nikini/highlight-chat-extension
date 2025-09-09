@@ -15,7 +15,8 @@
           "https://youtube.com/live*",
           "https://youtube.com/live_chat*",
           "https://youtube.com/live_chat_replay*",
-          "https://youtube.com/watch*"
+          "https://youtube.com/watch*",
+          "https://studio.youtube.com/live_chat*"
         ],
         "js": ["content.js"]
       }
