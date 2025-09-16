@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>YouTube Chat Highlighter – Options</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body { font: 14px/1.4 system-ui, sans-serif; padding: 16px; }
+      label { display:block; margin: 0 0 8px; }
+      input[type="text"] { width: 360px; max-width: 100%; padding: 6px; }
+      button { margin-top: 10px; padding: 6px 10px; cursor: pointer; }
+      .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+      .muted { color: #666; }
+      .error { color: #b00020; }
+      .success { color: #1a7f37; }
+      .box { padding: 10px; border: 1px solid rgba(150,150,150,.5); border-radius: 8px; max-width: 680px; }
+      code.link { user-select: all; white-space: nowrap; }
+    </style>
+  </head>
+  <body>
+    <h1>Options</h1>
+
+    <div class="box" style="margin-bottom:16px">
+      <label>
+        Namespace (<code>ns</code>):
+        <input id="ns" type="text" placeholder="e.g. vpl-yt" />
+      </label>
+      <div class="row">
+        <button id="save" type="button">Save</button>
+        <span id="save-status" class="muted"></span>
+      </div>
+      <p class="muted">Used in the WebSocket path, e.g. <code>ws://mbe.ro:3001/&lt;ns&gt;/extension</code>.</p>
+      <p id="env-note" class="muted"></p>
+    </div>
+
+    <h2>Overlay URL</h2>
+    <div class="box">
+      <p class="muted" style="margin-top:0">Share this URL; it updates when you change the namespace.</p>
+      <div class="row">
+        <span id="overlay-url"><code class="link">http://mbe.ro:3001/—/overlay</code></span>
+        <button id="copy" type="button">Copy</button>
+        <a id="open" target="_blank" rel="noopener noreferrer">
+          <button type="button">Open</button>
+        </a>
+        <span id="copy-status" class="muted"></span>
+      </div>
+    </div>
+
+    <!-- Important: external script only -->
+    <script src="options.js"></script>
+  </body>
+</html>

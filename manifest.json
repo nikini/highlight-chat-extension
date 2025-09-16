@@ -1,9 +1,10 @@
 {
     "manifest_version": 3,
     "name": "YouTube Chat Highlighter",
-    "version": "1.0",
+    "version": "1.0.2",
     "description": "Add a button to YouTube Live Chat messages to highlight or forward them.",
-    "permissions": ["scripting"],
+    "permissions": ["storage"],
+    "options_ui": { "page": "options.html", "open_in_tab": false },
     "host_permissions": ["https://www.youtube.com/*"],
     "content_scripts": [
       {
