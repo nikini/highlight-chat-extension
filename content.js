@@ -15,6 +15,7 @@
   const INJECT_INTERVAL_MS = 500;
   const RECONNECT_MIN_MS = 1000;
   const RECONNECT_MAX_MS = 10000;
+  const KEEPALIVE_INTERVAL_MS = 30000;
 
   const SUPPORTED_RENDERERS = [
     "YT-LIVE-CHAT-TEXT-MESSAGE-RENDERER",
@@ -33,6 +34,8 @@
   let clearAllButton = null;
   let chatObserver = null;
   let reconnectTimer = null;
+  let keepAliveTimer = null;
+  let lastPayloadString = JSON.stringify({});
 
   // ------------------------------
   // Storage helpers
@@ -81,10 +84,13 @@
     socket.onopen = () => {
       console.log("🔌 WS connected:", wsUrl());
       clearTimeout(reconnectTimer);
+      startKeepAlive();
+      flushLastPayload();
     };
 
     socket.onclose = () => {
       console.warn("🔌 WS closed");
+      stopKeepAlive();
       scheduleReconnect();
     };
 
@@ -113,6 +119,7 @@
       try { socket.onopen = socket.onclose = socket.onmessage = socket.onerror = null; } catch {}
       try { socket.close(); } catch {}
     }
+    stopKeepAlive();
     socket = null;
   }
 
@@ -132,11 +139,41 @@
   }
 
   function wsSend(obj) {
+    lastPayloadString = JSON.stringify(obj ?? {});
     if (!socket || socket.readyState !== WebSocket.OPEN) return;
     try {
-      socket.send(JSON.stringify(obj));
+      socket.send(lastPayloadString);
     } catch (e) {
       console.warn("WS send failed:", e);
+    }
+  }
+
+  function flushLastPayload() {
+    if (!socket || socket.readyState !== WebSocket.OPEN || !lastPayloadString) return;
+    try {
+      socket.send(lastPayloadString);
+    } catch (e) {
+      console.warn("WS resend failed:", e);
+    }
+  }
+
+  function startKeepAlive() {
+    stopKeepAlive();
+    keepAliveTimer = setInterval(() => {
+      if (!socket || socket.readyState !== WebSocket.OPEN) return;
+      if (!lastPayloadString) return;
+      try {
+        socket.send(lastPayloadString);
+      } catch (e) {
+        console.warn("WS keepalive failed:", e);
+      }
+    }, KEEPALIVE_INTERVAL_MS);
+  }
+
+  function stopKeepAlive() {
+    if (keepAliveTimer) {
+      clearInterval(keepAliveTimer);
+      keepAliveTimer = null;
     }
   }
 
